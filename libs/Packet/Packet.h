@@ -19,7 +19,6 @@ public:
 
     Device* getSender();
     Device* getReceiver();
-
 };
 
 

@@ -5,6 +5,7 @@
 - libtins-dev
 - libboost-log-dev (git version is currently v4.1 / ubuntu18 apt is v3.4)
 - libbluetooth-dev
+- slite3pp
 
 ```
 sudo ./dependencies.sh

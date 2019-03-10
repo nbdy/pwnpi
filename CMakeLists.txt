@@ -27,6 +27,12 @@ add_executable(pwnpi
         libs/Device/Device.cpp
         libs/Device/Device.h
         libs/Utils/Utils.cpp
-        libs/Utils/Utils.h libs/Packet/Packet.cpp libs/Packet/Packet.h)
+        libs/Utils/Utils.h
+        libs/Packet/Packet.cpp
+        libs/Packet/Packet.h)
 
-target_link_libraries(pwnpi tins ev pthread gps bluetooth hiredis redox ${Boost_LIBRARIES})
+target_link_libraries(pwnpi tins ev pthread gps bluetooth hiredis redox ${Boost_LIBRARIES} sqlite3)
+
+install(DIRECTORY DESTINATION /var/lib/pwnpi/database/)
+install(DIRECTORY DESTINATION /var/lib/pwnpi/)
+

@@ -5,23 +5,26 @@
 #ifndef PWNPI_DATABASE_H
 #define PWNPI_DATABASE_H
 
-#include <redox.hpp>
 #include "../Json/json.hpp"
+#include "../../sqlite3pp/headeronly_src/sqlite3pp.h"
 #include "../Device/Device.h"
+#include "../GPS/GPS.h"
 
 
 using json = nlohmann::json;
 
 class Database {
 private:
-    redox::Redox rdx;
+    sqlite3pp::database db;
+
+    void _check();
 
 public:
-    Database(char* host, int port);
-    Database(std::string host, int port);
+    Database();
+    explicit Database(const std::string& file);
 
     void putDevice(Device* device);
-
+    void putPosition(Position* position);
 };
 
 
