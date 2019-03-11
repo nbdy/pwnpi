@@ -62,10 +62,10 @@ int main(int argc, char** argv) {
     std::atexit(atDeath);
     registerSigHandlers();
     Configuration* cfg = Configuration::parse_arguments(argc, argv);
-    setupLogging(cfg->getVerbose(), cfg->getDebug());
+    setupLogging(cfg->getSystemConfiguration().verbose, cfg->getSystemConfiguration().debug);
     BOOST_LOG_TRIVIAL(debug) << "initializing manager";
     mgr = new Manager(cfg);
-    if(cfg->getDebug()) waitForDebugger();
+    if(cfg->getSystemConfiguration().debug) waitForDebugger();
     BOOST_LOG_TRIVIAL(debug) << "running manager";
     mgr->run();
     BOOST_LOG_TRIVIAL(debug) << "everything comes to an end";

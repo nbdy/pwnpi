@@ -13,14 +13,13 @@
 class WiFi : public RunnableWithGPS {
 private:
     std::string name = "WiFi";
-    WiFiConfiguration* cfg;
+    wc::WifiConfiguration wifiConfiguration;
     void processDot11Frame(const Tins::Dot11& dot11);
 
 public:
-    WiFi();
-    explicit WiFi(WiFiConfiguration* cfg);
-    WiFi(WiFiConfiguration* cfg, GPS* gps);
-    void run();
+    explicit WiFi(wc::WifiConfiguration cfg);
+    WiFi(wc::WifiConfiguration cfg, GPS* gps);
+    void run() override;
 };
 
 

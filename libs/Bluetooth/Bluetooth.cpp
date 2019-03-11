@@ -7,20 +7,14 @@
 #include "Bluetooth.h"
 
 
-Bluetooth::Bluetooth() {
-    this->cfg = new BluetoothConfiguration();
-    this->setGPS(new GPS());
-    this->setDoRun(true);
-}
-
-Bluetooth::Bluetooth(BluetoothConfiguration *cfg) {
-    this->cfg = cfg;
+Bluetooth::Bluetooth(bc::BluetoothConfiguration cfg) {
+    bluetoothConfiguration = std::move(cfg);
     this->setGPS(new GPS());
     setDoRun(true);
 }
 
-Bluetooth::Bluetooth(BluetoothConfiguration *cfg, GPS *gps) {
-    this->cfg = cfg;
+Bluetooth::Bluetooth(bc::BluetoothConfiguration cfg, GPS *gps) {
+    bluetoothConfiguration = std::move(cfg);
     this->setGPS(gps);
     setDoRun(true);
 }

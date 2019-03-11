@@ -25,6 +25,8 @@ void Database::_check() {
                                           "timestamp DATETIME, "
                                           "data BLOB);");
     packets_create.execute();
+    sqlite3pp::command positions_create(db, "CREATE TABLE IF NOT EXISTS position (longitude DOUBLE, latitude DOUBLE, altitude DOUBLE, speed DOUBLE, satellitesUsed INT);");
+    positions_create.execute();
     // todo create more tables
 }
 
@@ -32,6 +34,16 @@ void Database::putDevice(Device *device) {
     // todo
 }
 
+void Database::putPacket(Packet *packet) {
+    // todo
+}
+
 void Database::putPosition(Position *position) {
-    sqlite3pp::command cmd(db, "INSERT INTO positions (longitude, latitude, altitude)");
+    sqlite3pp::command cmd(db, "INSERT INTO positions (longitude, latitude, altitude, speed, satellitesUsed) VALUES (:longitude, :latitude, :altitude, :speed, :satellitesUsed);");
+    cmd.bind(":longitude", position->getLongitude());
+    cmd.bind(":latitude", position->getLatitude());
+    cmd.bind(":altitude", position->getAltitude());
+    cmd.bind(":speed", position->getSpeed());
+    cmd.bind(":satellitesUsed", position->getSatellitesUsed());
+    cmd.execute();
 }

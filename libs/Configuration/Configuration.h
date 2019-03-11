@@ -7,41 +7,85 @@
 
 #include <string>
 #include <vector>
+#include "../Json/json.hpp"
+
+using nlohmann::json;
 
 
-class WirelessConfiguration {
-private:
-    std::string interface;
+namespace bc {
+    struct BluetoothConfiguration {
+        std::string interface;
+    };
 
-public:
-    void setInterface(std::string interface);
-    std::string getInterface();
+    inline void to_json(json& j, const bc::BluetoothConfiguration& d){
+        j = json{{"interface", d.interface}, {}, {}};
+    }
 
-};
+    inline void from_json(const json& j, bc::BluetoothConfiguration& d){
 
+    }
+}
 
-class BluetoothConfiguration : public WirelessConfiguration{
-public:
-    BluetoothConfiguration();
-};
+namespace wc {
+    struct WifiConfiguration {
+        bool promiscuous;
+        std::string interface;
+    };
 
+    inline void to_json(json& j, const wc::WifiConfiguration& d){
+        j = json{{"promiscuous", d.promiscuous}, {"interface", d.interface}, {}};
+    }
 
-class WiFiConfiguration : public WirelessConfiguration {
-private:
-    bool promiscuous;
+    inline void from_json(const json& j, wc::WifiConfiguration& d){
+        d.promiscuous = j.at("promiscuous");
+    }
+}
 
-public:
-    WiFiConfiguration();
+namespace gc {
+    struct GPSConfiguration {
 
-    void setPromiscuous(bool promiscuous);
-    bool getPromiscuous();
-};
+    };
 
+    inline void to_json(json& j, const gc::GPSConfiguration& d){
+        j = json{{}, {}, {}};
+    }
 
-class GPSConfiguration {
-public:
-    GPSConfiguration();
-};
+    inline void from_json(const json& j, gc::GPSConfiguration& d){
+
+    }
+}
+
+namespace db {
+    struct DatabaseConfiguration {
+        std::string file;
+    };
+
+    inline void to_json(json& j, const db::DatabaseConfiguration& d){
+        j = json{{"file", d.file}, {}, {}};
+    }
+
+    inline void from_json(const json& j, db::DatabaseConfiguration& d){
+        d.file = j.at("file");
+    }
+}
+
+namespace sc {
+    struct SystemConfiguration {
+        bool lipo = false;
+        bool debug = false;
+        bool verbose = false;
+    };
+
+    inline void to_json(json& j, const sc::SystemConfiguration& d){
+        j = json{{"lipo", d.lipo}, {"debug", d.debug}, {"verbose", d.verbose}};
+    }
+
+    inline void from_json(const json& j, sc::SystemConfiguration& d){
+        d.lipo = j.at("lipo");
+        d.debug = j.at("debug");
+        d.verbose = j.at("verbose");
+    }
+}
 
 
 class Configuration {
@@ -50,9 +94,11 @@ private:
     bool verbose = false;
     bool lipo = false;
 
-    BluetoothConfiguration* bluetoothConfiguration;
-    WiFiConfiguration* wiFiConfiguration;
-    GPSConfiguration* gpsConfiguration;
+    bc::BluetoothConfiguration bluetoothConfiguration;
+    wc::WifiConfiguration wifiConfiguration;
+    gc::GPSConfiguration gpsConfiguration;
+    db::DatabaseConfiguration databaseConfiguration;
+    sc::SystemConfiguration systemConfiguration;
 
     static bool in_array(std::string key, std::vector<std::string> array);
     static void help();
@@ -62,23 +108,11 @@ public:
 
     Configuration();
 
-    BluetoothConfiguration* getBluetoothConfiguration();
-    void setBluetoothConfiguration(BluetoothConfiguration* cfg);
-
-    WiFiConfiguration* getWifiConfiguration();
-    void setWiFiConfiguration(WiFiConfiguration* cfg);
-
-    GPSConfiguration* getGPSConfiguration();
-    void setGPSConfiguration(GPSConfiguration* cfg);
-
-    bool getDebug();
-    void setDebug(bool debug);
-
-    bool getVerbose();
-    void setVerbose(bool verbose);
-
-    bool getLipo();
-    void setLipo(bool lipo);
+    bc::BluetoothConfiguration getBluetoothConfiguration();
+    wc::WifiConfiguration getWifiConfiguration();
+    gc::GPSConfiguration getGPSConfiguration();
+    db::DatabaseConfiguration getDatabaseConfiguration();
+    sc::SystemConfiguration getSystemConfiguration();
 };
 
 

@@ -41,21 +41,18 @@ public:
 class GPS : public Runnable {
 private:
     std::string name = "GPS";
-    GPSConfiguration* cfg;
+    gc::GPSConfiguration gpsConfiguration;
     Position* currentPosition;
 
 public:
     GPS();
-    explicit GPS(GPSConfiguration* cfg);
+    explicit GPS(gc::GPSConfiguration cfg);
 
-    void run();
+    void run() override ;
 
     void setCurrentPosition(gps_data_t* data);
     void setCurrentPosition(Position* position);
     Position* getCurrentPosition();
-
-    GPSConfiguration* getGPSConfiguration();
-    void setGPSConfiguration(GPSConfiguration* cfg);
 };
 
 

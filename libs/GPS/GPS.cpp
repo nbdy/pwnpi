@@ -12,8 +12,8 @@ GPS::GPS() {
     setDoRun(true);
 }
 
-GPS::GPS(GPSConfiguration *cfg) {
-    this->cfg = cfg;
+GPS::GPS(gc::GPSConfiguration cfg) {
+    this->gpsConfiguration = cfg;
     setDoRun(true);
 }
 
@@ -43,10 +43,6 @@ void GPS::setCurrentPosition(gps_data_t *data) {
     print(2, "got new gps position");
     this->currentPosition = new Position(data);
 }
-
-GPSConfiguration* GPS::getGPSConfiguration() {return cfg;}
-
-void GPS::setGPSConfiguration(GPSConfiguration *cfg) {this->cfg = cfg;}
 
 Position::Position() {
     this->longitude = 0;

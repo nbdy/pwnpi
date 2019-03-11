@@ -9,6 +9,7 @@
 #include "../../sqlite3pp/headeronly_src/sqlite3pp.h"
 #include "../Device/Device.h"
 #include "../GPS/GPS.h"
+#include "../Packet/Packet.h"
 
 
 using json = nlohmann::json;
@@ -25,6 +26,7 @@ public:
 
     void putDevice(Device* device);
     void putPosition(Position* position);
+    void putPacket(Packet* packet);
 };
 
 

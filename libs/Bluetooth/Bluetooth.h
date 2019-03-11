@@ -19,12 +19,11 @@
 class Bluetooth : public RunnableWithGPS {
 private:
     std::string name = "blueooth";
-    BluetoothConfiguration* cfg;
+    bc::BluetoothConfiguration bluetoothConfiguration;
 
 public:
-    Bluetooth();
-    explicit Bluetooth(BluetoothConfiguration* cfg);
-    Bluetooth(BluetoothConfiguration* cfg, GPS* gps);
+    explicit Bluetooth(bc::BluetoothConfiguration cfg);
+    Bluetooth(bc::BluetoothConfiguration cfg, GPS* gps);
 
     void run();
 };

@@ -54,7 +54,7 @@ private:
 
 public:
     RunnableWithGPS();
-    explicit RunnableWithGPS(GPSConfiguration* cfg);
+    explicit RunnableWithGPS(gc::GPSConfiguration cfg);
     explicit RunnableWithGPS(GPS* gps);
 
     void setGPS(GPS* gps);

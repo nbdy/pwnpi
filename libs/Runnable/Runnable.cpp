@@ -43,7 +43,7 @@ RunnableWithGPS::RunnableWithGPS() {
     gps = new GPS();
 }
 
-RunnableWithGPS::RunnableWithGPS(GPSConfiguration *cfg) {
+RunnableWithGPS::RunnableWithGPS(gc::GPSConfiguration cfg) {
     gps = new GPS(cfg);
 }
 
