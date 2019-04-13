@@ -10,22 +10,15 @@
 #include <tins/tins.h>
 
 class Device {
-private:
+protected:
     std::string address;
-    std::string receiver;
-    uint8_t type;
 
 public:
-    Device();
-    Device(Tins::Dot11 dot11, bool src); // else dst (duh)
-};
+    Device(){};
+    explicit Device(const std::string& address);
 
-class TX : public Device {
-
-};
-
-class RX : public Device {
-
+    void setAddress(const std::string& address);
+    std::string getAddress();
 };
 
 #endif //PWNPI_DEVICE_H

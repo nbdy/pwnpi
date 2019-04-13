@@ -15,6 +15,20 @@
 #include <bluetooth/hci_lib.h>
 #include "../Configuration/Configuration.h"
 #include "../GPS/GPS.h"
+#include "../Device/Device.h"
+
+class BluetoothDevice : public Device {
+protected:
+    std::string name;
+
+public:
+    BluetoothDevice();
+    explicit BluetoothDevice(const std::string& address);
+    BluetoothDevice(const std::string& address, const std::string& name);
+
+    void setName(const std::string& name);
+    std::string getName();
+};
 
 class Bluetooth : public RunnableWithGPS {
 private:
