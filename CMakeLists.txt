@@ -3,10 +3,6 @@ project(pwnpi)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.63 COMPONENTS log log_setup REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
-
 add_executable(pwnpi
         main.cpp
         libs/Configuration/Configuration.cpp
@@ -31,7 +27,7 @@ add_executable(pwnpi
         libs/Packet/Packet.cpp
         libs/Packet/Packet.h)
 
-target_link_libraries(pwnpi tins ev pthread gps bluetooth hiredis redox ${Boost_LIBRARIES} sqlite3)
+target_link_libraries(pwnpi tins ev pthread gps bluetooth hiredis redox sqlite3)
 
 install(DIRECTORY DESTINATION /var/lib/pwnpi/database/)
 install(DIRECTORY DESTINATION /var/lib/pwnpi/)

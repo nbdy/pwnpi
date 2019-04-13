@@ -18,11 +18,8 @@ GPS::GPS(gc::GPSConfiguration cfg) {
 }
 
 void GPS::run() {
-    print("running gps; initializing client");
     gpsmm gps_rec("localhost", DEFAULT_GPSD_PORT);
-    print("checking if we can stream");
     if(gps_rec.stream(WATCH_ENABLE|WATCH_JSON) == nullptr) this->setDoRun(false);
-    print(2, "running gps in a loop");
     while (this->getDoRun()) {
         struct gps_data_t* nd;
         if(!gps_rec.waiting(50000000)) continue;
@@ -40,7 +37,6 @@ void GPS::setCurrentPosition(Position* position) {
 }
 
 void GPS::setCurrentPosition(gps_data_t *data) {
-    print(2, "got new gps position");
     this->currentPosition = new Position(data);
 }
 

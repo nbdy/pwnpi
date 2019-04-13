@@ -1,10 +1,5 @@
 #include <iostream>
 #include <csignal>
-#include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/log/expressions.hpp>
-#include <boost/log/utility/setup/file.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
 #include "libs/Configuration/Configuration.h"
 #include "libs/Manager/Manager.h"
 
@@ -17,13 +12,13 @@ Manager* mgr;
  */
 
 void sigHandler(int sigNum){
-    BOOST_LOG_TRIVIAL(debug) << "caught signal: " << sigNum;
+    std::cout << "caught signal: " << sigNum << std::endl;
     mgr->setDoRun(false);
     //exit(0);
 }
 
 void atDeath(){
-    BOOST_LOG_TRIVIAL(debug) << "farewell";
+    std::cout << "farewell" << std::endl;
     //exit(0);
 }
 
@@ -36,25 +31,15 @@ void registerSigHandlers(){
 
 void checkIsRoot(){
     if(geteuid() != 0){
-        BOOST_LOG_TRIVIAL(error) << "please run with root";
+        std::cout << "please run with root" << std::endl;
         exit(0);
     }
 }
 
 void waitForDebugger(){
-    BOOST_LOG_TRIVIAL(debug) << "waiting for debugger to attach";
+    std::cout << "waiting for debugger to attach" << std::endl;
     bool waitForDebugger = true;
     while(waitForDebugger) sleep(2);
-}
-
-void setupLogging(bool verbose, bool debug){
-    namespace keywords = boost::log::keywords;
-    namespace logging = boost::log; // inb4 not healthy
-    logging::add_file_log(keywords::file_name = "pwnpi.log", keywords::format = "{%Timestamp%} - {%ThreadID%} - {%Severity%} > %Message%");
-    if(debug) logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::debug);
-    else if(verbose) logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
-    else logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::warning);
-    logging::add_common_attributes();
 }
 
 int main(int argc, char** argv) {
@@ -62,12 +47,11 @@ int main(int argc, char** argv) {
     std::atexit(atDeath);
     registerSigHandlers();
     Configuration* cfg = Configuration::parse_arguments(argc, argv);
-    setupLogging(cfg->getSystemConfiguration().verbose, cfg->getSystemConfiguration().debug);
-    BOOST_LOG_TRIVIAL(debug) << "initializing manager";
+    std::cout << "initializing manager" << std::endl;
     mgr = new Manager(cfg);
     if(cfg->getSystemConfiguration().debug) waitForDebugger();
-    BOOST_LOG_TRIVIAL(debug) << "running manager";
+    std::cout << "running manager" << std::endl;
     mgr->run();
-    BOOST_LOG_TRIVIAL(debug) << "everything comes to an end";
+    std::cout << "everything comes to an end" << std::endl;
     return 0;
 }

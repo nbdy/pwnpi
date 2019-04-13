@@ -8,30 +8,30 @@
 
 Manager::Manager(Configuration* cfg) {
     this->cfg = cfg;
-    BOOST_LOG_TRIVIAL(debug) << "initializing gps";
+    std::cout << "initializing gps" << std::endl;
     gps = new GPS(cfg->getGPSConfiguration());
-    BOOST_LOG_TRIVIAL(debug) << "initializing wifi";
+    std::cout << "initializing wifi" << std::endl;
     wifi = new WiFi(cfg->getWifiConfiguration(), gps);
-    BOOST_LOG_TRIVIAL(debug) << "initializing bluetooth";
+    std::cout << "initializing bluetooth" << std::endl;
     bt = new Bluetooth(cfg->getBluetoothConfiguration(), gps);
     setDoRun(true);
 }
 
 void Manager::run() {
-    BOOST_LOG_TRIVIAL(debug) << "getting gps thread";
+    std::cout << "getting gps thread" << std::endl;
     std::thread gpsThread = gps->getThread();
-    BOOST_LOG_TRIVIAL(debug) << "getting wifi thread";
+    std::cout << "getting wifi thread" << std::endl;
     std::thread wifiThread = wifi->getThread();
-    BOOST_LOG_TRIVIAL(debug) << "getting bluetooth thread";
+    std::cout << "getting bluetooth thread" << std::endl;
     std::thread btThread = bt->getThread();
-    BOOST_LOG_TRIVIAL(debug) << "running in a loop";
+    std::cout << "running in a loop" << std::endl;
 
     while (doRun){
-
+        // todo collect results
         sleep(2); // idk
     }
 
-    BOOST_LOG_TRIVIAL(debug) << "loop is done running; telling children to stop";
+    std::cout << "loop is done running; telling children to stop" << std::endl;
     wifi->setDoRun(false);
     bt->setDoRun(false);
     gps->setDoRun(false);
@@ -40,7 +40,7 @@ void Manager::run() {
     btThread.join();
     gpsThread.join();
 
-    BOOST_LOG_TRIVIAL(debug) << "everything should be quiet";
+    std::cout << "everything should be quiet" << std::endl;
 }
 
 bool Manager::getDoRun() {
@@ -48,7 +48,7 @@ bool Manager::getDoRun() {
 }
 
 void Manager::setDoRun(bool doRun) {
-    BOOST_LOG_TRIVIAL(debug) << "setting doRun to " << doRun;
+    std::cout << "setting doRun to " << doRun << std::endl;
     this->doRun = doRun;
 }
 

@@ -21,21 +21,6 @@ public:
 
     virtual void run();
 
-    /*
-     * enum severity_level
-     *   {
-     *       trace,     // 0
-     *       debug,
-     *       info,
-     *       warning,
-     *       error,
-     *       fatal      // 5
-     *   };
-     */
-
-    void print(std::string data);
-    void print(uint8_t sev, std::string data);
-
     bool getDoRun();
     void setDoRun(bool doRun);
 

@@ -3,20 +3,19 @@
 //
 
 #include <iostream>
-#include <boost/log/trivial.hpp>
 #include "Configuration.h"
 
 Configuration::Configuration() {}
 
 void Configuration::help() {
-    BOOST_LOG_TRIVIAL(info) << "usage: ./pwnpi {arguments}";
-    BOOST_LOG_TRIVIAL(info) << "\t-h\t--help";
-    BOOST_LOG_TRIVIAL(info) << "\t-v\t--verbose";
-    BOOST_LOG_TRIVIAL(info) << "\t-b/-w\t--bluetooth/--wifi";
-    BOOST_LOG_TRIVIAL(info) << "\t\t-i\t--interface";
-    BOOST_LOG_TRIVIAL(info) << "[wifi specific]";
-    BOOST_LOG_TRIVIAL(info) << "\t\t-p\t--promiscous";
-    BOOST_LOG_TRIVIAL(info) << "\t-l\t--lipo";
+    std::cout << "usage: ./pwnpi {arguments}" << std::endl;
+    std::cout << "\t-h\t--help" << std::endl;
+    std::cout << "\t-v\t--verbose" << std::endl;
+    std::cout << "\t-b/-w\t--bluetooth/--wifi" << std::endl;
+    std::cout << "\t\t-i\t--interface" << std::endl;
+    std::cout << "[wifi specific]" << std::endl;
+    std::cout << "\t\t-p\t--promiscous" << std::endl;
+    std::cout << "\t-l\t--lipo" << std::endl;
     exit(0);
 }
 
@@ -26,7 +25,7 @@ bool Configuration::in_array(std::string key, std::vector<std::string> array) {
 }
 
 Configuration* Configuration::parse_arguments(int argc, char **argv) {
-    BOOST_LOG_TRIVIAL(debug) << "parsing arguments";
+    std::cout << "parsing arguments" << std::endl;
     auto cfg = new Configuration();
     for(int i=0; i<argc; i++){
         std::string a = std::string(argv[i]);
@@ -43,9 +42,8 @@ Configuration* Configuration::parse_arguments(int argc, char **argv) {
             if(in_array(_a, {"-p", "--promiscuous"})) cfg->wifiConfiguration.promiscuous = true;
         }
     }
-
     if(geteuid() != 0) cfg->wifiConfiguration.promiscuous = false;
-
+    std::cout << "parsed arguments" << std::endl;
     return cfg;
 }
 

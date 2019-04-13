@@ -2,9 +2,9 @@
 
 if [[ $(id -u) -ne 0 ]] ; then echo "run with sudo / root" ; exit 1 ; fi
 
-echo "installing libgps, libbluetooth, liboost-log, libpcap, libssl, libev-dev  and cmake"
+echo "installing libgps, libbluetooth, libpcap, libssl, libev-dev  and cmake"
 
-apt install libgps-dev libbluetooth-dev libboost-log-dev libpcap-dev libssl-dev libev-dev cmake -y
+apt install libgps-dev libbluetooth-dev libpcap-dev libssl-dev libev-dev cmake -y
 
 echo "getting and installing submodules"
 git submodule update --init

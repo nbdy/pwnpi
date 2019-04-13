@@ -25,7 +25,7 @@ public:
     explicit Bluetooth(bc::BluetoothConfiguration cfg);
     Bluetooth(bc::BluetoothConfiguration cfg, GPS* gps);
 
-    void run();
+    void run() override;
 };
 
 

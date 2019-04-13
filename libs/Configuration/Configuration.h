@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <unistd.h>
 #include "../Json/json.hpp"
 
 using nlohmann::json;
@@ -22,7 +23,7 @@ namespace bc {
     }
 
     inline void from_json(const json& j, bc::BluetoothConfiguration& d){
-
+        d.interface = j.at("interface");
     }
 }
 
@@ -38,6 +39,7 @@ namespace wc {
 
     inline void from_json(const json& j, wc::WifiConfiguration& d){
         d.promiscuous = j.at("promiscuous");
+        d.interface = j.at("interface");
     }
 }
 
@@ -114,8 +116,6 @@ public:
     db::DatabaseConfiguration getDatabaseConfiguration();
     sc::SystemConfiguration getSystemConfiguration();
 };
-
-
 
 
 #endif //PWNPI_CONFIGURATION_H
