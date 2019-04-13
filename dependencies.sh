@@ -4,7 +4,7 @@ if [[ ! $(id -u) -ne 0 ]] ; then echo "we'll request root as we go" ; exit 1 ; f
 
 echo "installing libgps, libbluetooth, libpcap, libssl, libev-dev  and cmake"
 
-sudo apt install libgps-dev libbluetooth-dev libpcap-dev libssl-dev libev-dev cmake -y
+sudo apt install libgps-dev libbluetooth-dev libboost-regex libpcap-dev libssl-dev libev-dev cmake -y
 
 echo "getting and installing submodules"
 git submodule update --init
