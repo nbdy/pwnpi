@@ -15,6 +15,9 @@ void Configuration::help() {
     std::cout << "\t\t-i\t--interface" << std::endl;
     std::cout << "[wifi specific]" << std::endl;
     std::cout << "\t\t-p\t--promiscous" << std::endl;
+    std::cout << "[bluetooth specific]" << std::endl;
+    std::cout << "\t\t-ole\t--only-le" << std::endl;
+    std::cout << "\t\t-oc\t--only-classic" << std::endl;
     std::cout << "\t-l\t--lipo" << std::endl;
     exit(0);
 }
@@ -25,13 +28,12 @@ bool Configuration::in_array(std::string key, std::vector<std::string> array) {
 }
 
 Configuration* Configuration::parse_arguments(int argc, char **argv) {
-    std::cout << "parsing arguments" << std::endl;
     auto cfg = new Configuration();
     for(int i=0; i<argc; i++){
         std::string a = std::string(argv[i]);
         if(in_array(a, {"-h", "--help"})) help();
-        if(in_array(a, {"-d", "--debug"})) cfg->debug = true;
-        if(in_array(a, {"-v", "--verbose"})) cfg->verbose = true;
+        if(in_array(a, {"-d", "--debug"})) cfg->systemConfiguration.debug = true;
+        if(in_array(a, {"-v", "--verbose"})) cfg->systemConfiguration.verbose = true;
         if(in_array(a, {"-w", "-b", "--wifi", "--bluetooth"})){
             std::string _a(argv[i + 1]);
             if(in_array(_a, {"-i", "--interface"})){
@@ -40,10 +42,11 @@ Configuration* Configuration::parse_arguments(int argc, char **argv) {
                 if(in_array(a, {"-w", "--wifi"})) cfg->wifiConfiguration.interface = __a;
             }
             if(in_array(_a, {"-p", "--promiscuous"})) cfg->wifiConfiguration.promiscuous = true;
+            if(in_array(_a, {"-ole", "--only-le"})) cfg->bluetoothConfiguration.onlyLE = true;
+            if(in_array(_a, {"-oc", "--only-classic"})) cfg->bluetoothConfiguration.onlyClassic = true;
         }
     }
     if(geteuid() != 0) cfg->wifiConfiguration.promiscuous = false;
-    std::cout << "parsed arguments" << std::endl;
     return cfg;
 }
 

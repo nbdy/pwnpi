@@ -32,9 +32,9 @@ void Manager::run() {
     }
 
     std::cout << "loop is done running; telling children to stop" << std::endl;
-    wifi->setDoRun(false);
-    bt->setDoRun(false);
-    gps->setDoRun(false);
+    wifi->stop();
+    bt->stop();
+    gps->stop();
 
     wifiThread.join();
     btThread.join();

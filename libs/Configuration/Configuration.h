@@ -16,14 +16,18 @@ using nlohmann::json;
 namespace bc {
     struct BluetoothConfiguration {
         std::string interface;
+        bool onlyLE = true;
+        bool onlyClassic = false;
     };
 
     inline void to_json(json& j, const bc::BluetoothConfiguration& d){
-        j = json{{"interface", d.interface}, {}, {}};
+        j = json{{"interface", d.interface}, {"onlyLE", d.onlyLE}, {"onlyClassic", d.onlyClassic}};
     }
 
     inline void from_json(const json& j, bc::BluetoothConfiguration& d){
         d.interface = j.at("interface");
+        d.onlyLE = j.at("onlyLE");
+        d.onlyClassic = j.at("onlyClassic");
     }
 }
 
@@ -92,10 +96,6 @@ namespace sc {
 
 class Configuration {
 private:
-    bool debug = false;
-    bool verbose = false;
-    bool lipo = false;
-
     bc::BluetoothConfiguration bluetoothConfiguration;
     wc::WifiConfiguration wifiConfiguration;
     gc::GPSConfiguration gpsConfiguration;

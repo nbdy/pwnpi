@@ -20,6 +20,7 @@ public:
     Runnable();
 
     virtual void run();
+    virtual void stop();
 
     bool getDoRun();
     void setDoRun(bool doRun);

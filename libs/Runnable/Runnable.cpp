@@ -54,3 +54,7 @@ std::string Runnable::getName() {
 void Runnable::setName(const std::string& name) {
     this->name = name;
 }
+
+void Runnable::stop() {
+    setDoRun(false);
+}
