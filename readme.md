@@ -27,17 +27,34 @@ usage: ./pwnpi {arguments}
 	-v      --verbose
 	-b/-w	--bluetooth/--wifi
 		-i	--interface
+		-e  --enable
+		    --disable
 [wifi specific]
 		-p	--promiscous
+[bluetooth specific]
+        -ol --only-le
+        -oc --only-classic
+[lipo]
 	-l      --lipo
 
-ex:
+ex1:
     sudo ./pwnpi -b -i hci1 -w -i wlan1mon -w -p
                 /\          /\          /\
 sets bluetooth interface    || sets wifi promiscuous
                 sets wifi interface
                 
 ==  sudo ./pwnpi --bluetooth --interface hci1 --wifi --interface wlan1mon --wifi --promiscuous 
+
+ex2:
+    ./pwnpi -b --disable -w -i wlan0
+               /\           /\
+       disables bluetooth   sets wifi interface
+
+ex3:
+    sudo ./pwnpi -b -i hci0 -b -ol -w --disable
+                /\        /\      /\
+sets bluetooth interface  ||    disables wifi
+    indicates that we only want to scan for bluetoot low energy devices
 ```
 
 #### faq
@@ -53,4 +70,4 @@ Q: why don't you wanna run clion as root?<br>
 A: why don't you?<br>
 
 Q: i ran it with -d and it's stuck at 'waiting for debugger'<br>
-A: if you want to debug something, run with gdb and set 'waitForDebugger' = false<br>
+A: if you want to debug something, run with gdb and set 'waitingForDebugger' = false<br>

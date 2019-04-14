@@ -24,13 +24,13 @@ bool BluetoothDevice::getIsLE() {return this->isLE;}
 Bluetooth::Bluetooth(bc::BluetoothConfiguration cfg) {
     bluetoothConfiguration = std::move(cfg);
     this->setGPS(new GPS());
-    setDoRun(true);
+    setDoRun(bluetoothConfiguration.enable);
 }
 
 Bluetooth::Bluetooth(bc::BluetoothConfiguration cfg, GPS *gps) {
     bluetoothConfiguration = std::move(cfg);
     this->setGPS(gps);
-    setDoRun(true);
+    setDoRun(bluetoothConfiguration.enable);
 }
 
 std::vector<BluetoothDevice*> Bluetooth::scanClassic() {

@@ -13,11 +13,14 @@ void Configuration::help() {
     std::cout << "\t-v\t--verbose" << std::endl;
     std::cout << "\t-b/-w\t--bluetooth/--wifi" << std::endl;
     std::cout << "\t\t-i\t--interface" << std::endl;
+    std::cout << "\t\t-e\t--enable" << std::endl;
+    std::cout << "\t\t\t--disable" << std::endl;
     std::cout << "[wifi specific]" << std::endl;
     std::cout << "\t\t-p\t--promiscous" << std::endl;
     std::cout << "[bluetooth specific]" << std::endl;
     std::cout << "\t\t-ole\t--only-le" << std::endl;
     std::cout << "\t\t-oc\t--only-classic" << std::endl;
+    std::cout << "[lipo]" << std::endl;
     std::cout << "\t-l\t--lipo" << std::endl;
     exit(0);
 }
@@ -38,8 +41,16 @@ Configuration* Configuration::parse_arguments(int argc, char **argv) {
             std::string _a(argv[i + 1]);
             if(in_array(_a, {"-i", "--interface"})){
                 std::string __a(argv[i + 2]);
-                if(in_array(a, {"-b", "--blueooth"})) cfg->bluetoothConfiguration.interface = __a;
+                if(in_array(a, {"-b", "--bluetooth"})) cfg->bluetoothConfiguration.interface = __a;
                 if(in_array(a, {"-w", "--wifi"})) cfg->wifiConfiguration.interface = __a;
+            }
+            if(in_array(_a, {"-e", "--enable"})){
+                if(in_array(a, {"-b", "--bluetooth"})) cfg->bluetoothConfiguration.enable = true;
+                if(in_array(a, {"-w", "--wifi"})) cfg->wifiConfiguration.enable = true;
+            }
+            if(in_array(_a, {"--disable"})){
+                if(in_array(a, {"-b", "--bluetooth"})) cfg->bluetoothConfiguration.enable = false;
+                if(in_array(a, {"-w", "--wifi"})) cfg->wifiConfiguration.enable = false;
             }
             if(in_array(_a, {"-p", "--promiscuous"})) cfg->wifiConfiguration.promiscuous = true;
             if(in_array(_a, {"-ole", "--only-le"})) cfg->bluetoothConfiguration.onlyLE = true;

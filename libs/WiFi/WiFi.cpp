@@ -9,13 +9,13 @@
 WiFi::WiFi(wc::WifiConfiguration cfg) {
     wifiConfiguration = std::move(cfg);
     this->setGPS(new GPS());
-    this->setDoRun(!this->wifiConfiguration.interface.empty());
+    this->setDoRun(!this->wifiConfiguration.interface.empty() && this->wifiConfiguration.enable);
 }
 
 WiFi::WiFi(wc::WifiConfiguration cfg, GPS *gps) {
     wifiConfiguration = std::move(cfg);
     this->setGPS(gps);
-    this->setDoRun(!this->wifiConfiguration.interface.empty());
+    this->setDoRun(!this->wifiConfiguration.interface.empty() && this->wifiConfiguration.enable);
 }
 
 void WiFi::processDot11Frame(const Tins::Dot11 &dot11) {

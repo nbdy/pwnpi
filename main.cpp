@@ -38,12 +38,12 @@ void checkIsRoot(){
 
 void waitForDebugger(){
     std::cout << "waiting for debugger to attach" << std::endl;
-    bool waitForDebugger = true;
-    while(waitForDebugger) sleep(2);
+    bool waitingForDebugger = true;
+    while(waitingForDebugger) sleep(2);
 }
 
 int main(int argc, char** argv) {
-    checkIsRoot();
+    // checkIsRoot();
     std::atexit(atDeath);
     registerSigHandlers();
     Configuration* cfg = Configuration::parse_arguments(argc, argv);

@@ -18,16 +18,18 @@ namespace bc {
         std::string interface;
         bool onlyLE = true;
         bool onlyClassic = false;
+        bool enable = true;
     };
 
     inline void to_json(json& j, const bc::BluetoothConfiguration& d){
-        j = json{{"interface", d.interface}, {"onlyLE", d.onlyLE}, {"onlyClassic", d.onlyClassic}};
+        j = json{{"interface", d.interface}, {"onlyLE", d.onlyLE}, {"onlyClassic", d.onlyClassic}, {"enable", d.enable}};
     }
 
     inline void from_json(const json& j, bc::BluetoothConfiguration& d){
         d.interface = j.at("interface");
         d.onlyLE = j.at("onlyLE");
         d.onlyClassic = j.at("onlyClassic");
+        d.enable = j.at("enable");
     }
 }
 
@@ -35,15 +37,17 @@ namespace wc {
     struct WifiConfiguration {
         bool promiscuous;
         std::string interface;
+        bool enable;
     };
 
     inline void to_json(json& j, const wc::WifiConfiguration& d){
-        j = json{{"promiscuous", d.promiscuous}, {"interface", d.interface}, {}};
+        j = json{{"promiscuous", d.promiscuous}, {"interface", d.interface}, {"enable", d.enable}};
     }
 
     inline void from_json(const json& j, wc::WifiConfiguration& d){
         d.promiscuous = j.at("promiscuous");
         d.interface = j.at("interface");
+        d.enable = j.at("enable");
     }
 }
 
