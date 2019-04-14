@@ -71,3 +71,6 @@ A: why don't you?<br>
 
 Q: i ran it with -d and it's stuck at 'waiting for debugger'<br>
 A: if you want to debug something, run with gdb and set 'waitingForDebugger' = false<br>
+
+Q: ble scan throws segmentation fault<br>
+A: right? and the code is basically copied from the gattlib examples<br>

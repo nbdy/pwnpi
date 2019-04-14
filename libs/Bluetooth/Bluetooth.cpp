@@ -78,21 +78,10 @@ void *Bluetooth::bleConnectDevice(void *arg) {
     gatt_connection = gattlib_connect(nullptr, addr, BDADDR_LE_PUBLIC, BT_SEC_LOW, 0, 0);
     if (gatt_connection == nullptr) {
         gatt_connection = gattlib_connect(nullptr, addr, BDADDR_LE_RANDOM, BT_SEC_LOW, 0, 0);
-        if (gatt_connection == nullptr) {
-            fprintf(stderr, "Fail to connect to the bluetooth device.\n");
-            goto connection_exit;
-        } else {
-            puts("Succeeded to connect to the bluetooth device with random address.");
-        }
-    } else {
-        puts("Succeeded to connect to the bluetooth device.");
+        if (gatt_connection == nullptr) goto connection_exit;
     }
-
     ret = gattlib_discover_primary(gatt_connection, &services, &services_count);
-    if (ret != 0) {
-        fprintf(stderr, "Fail to discover primary services.\n");
-        goto disconnect_exit;
-    }
+    if (ret != 0) goto disconnect_exit;
 
     for (i = 0; i < services_count; i++) {
         gattlib_uuid_to_string(&services[i].uuid, uuid_str, sizeof(uuid_str));
@@ -155,18 +144,13 @@ void Bluetooth::bleDiscoveredDevice(const char* addr, const char* name) {
 std::vector<BluetoothLEDevice*> Bluetooth::scanLE() {
     std::cout << "scanning bluetooth le" << std::endl;
     std::vector<BluetoothLEDevice*> devices;
+
     int ret = gattlib_adapter_open(bluetoothConfiguration.interface.c_str(), &gattAdapter);
-    if (ret) {
-        std::cout << "could not open '" << bluetoothConfiguration.interface << std::endl;
-        return devices;
-    }
+    if (ret) return devices;
 
     pthread_mutex_lock(&bleMtx);
     ret = gattlib_adapter_scan_enable(gattAdapter, bleDiscoveredDevice, BLE_SCAN_TIMEOUT);
-    if (ret) {
-        std::cout << "failed to scan" << std::endl;
-        return devices;
-    }
+    if (ret) return devices;
     gattlib_adapter_scan_disable(gattAdapter);
     pthread_mutex_unlock(&bleMtx);
 
