@@ -5,21 +5,42 @@
 #include <iostream>
 #include "Bluetooth.h"
 
-BluetoothDevice::BluetoothDevice() {
+pwnpi::BluetoothDevice::BluetoothDevice() {this->isLE = false;}
 
+pwnpi::BluetoothDevice::BluetoothDevice(const std::string &address) {this->address = address; this->isLE = false;}
+
+pwnpi::BluetoothDevice::BluetoothDevice(const std::string &address, const std::string &name) {this->address = address; this->name = name; isLE=false;}
+
+void pwnpi::BluetoothDevice::setName(const std::string &value) {this->name = value;}
+
+std::string pwnpi::BluetoothDevice::getName() {return this->name;}
+
+void pwnpi::BluetoothDevice::setIsLE(bool value) {this->isLE = value;}
+
+bool pwnpi::BluetoothDevice::getIsLE() {return this->isLE;}
+
+pwnpi::BluetoothLEDevice::BluetoothLEDevice(const std::string &address, const std::string &name,
+                                            const std::string &className, const std::string &path, bool connected, uint16_t rssi) {
+    this->address = address;
+    this->name = name;
+    this->className = className;
+    this->path = path;
+    this->connected = connected;
+    this->rssi = rssi;
+    setIsLE(true);
 }
 
-BluetoothDevice::BluetoothDevice(const std::string &address) {this->address = address;}
+void pwnpi::BluetoothLEDevice::setIsConnected(bool value) {connected = value;}
 
-BluetoothDevice::BluetoothDevice(const std::string &address, const std::string &name) {this->address = address; this->name = name;}
+void pwnpi::BluetoothLEDevice::setPath(const std::string &value) { this->path = value;}
 
-void BluetoothDevice::setName(const std::string &name) {this->name = name;}
+void pwnpi::BluetoothLEDevice::setClassName(const std::string &value) { this->className = value;}
 
-std::string BluetoothDevice::getName() {return this->name;}
+std::string pwnpi::BluetoothLEDevice::getPath() {return path;}
 
-void BluetoothDevice::setIsLE(bool value) {this->isLE = value;}
+bool pwnpi::BluetoothLEDevice::getIsConnected() {return connected;}
 
-bool BluetoothDevice::getIsLE() {return this->isLE;}
+std::string pwnpi::BluetoothLEDevice::getClassName() {return className;}
 
 Bluetooth::Bluetooth(bc::BluetoothConfiguration cfg) {
     bluetoothConfiguration = std::move(cfg);
@@ -33,12 +54,12 @@ Bluetooth::Bluetooth(bc::BluetoothConfiguration cfg, GPS *gps) {
     setDoRun(bluetoothConfiguration.enable);
 }
 
-std::vector<BluetoothDevice*> Bluetooth::scanClassic() {
-    std::vector<BluetoothDevice*> devices;
+std::vector<pwnpi::BluetoothDevice*> Bluetooth::scanClassic() {
+    std::vector<pwnpi::BluetoothDevice*> devices;
     inquiry_info* ii = nullptr;
     int maxRsp, numRsp, devId, sck, len, flags, i;
     char addr[19] = {0};
-    char name[248] = {0};
+    char _name[248] = {0};
     devId = hci_get_route(nullptr);
     sck = hci_open_dev(devId);
     if(devId < 0 || sck < 0) return devices;
@@ -49,138 +70,57 @@ std::vector<BluetoothDevice*> Bluetooth::scanClassic() {
     numRsp = hci_inquiry(devId, len, maxRsp, nullptr, &ii, flags);
     for (i = 0; i < numRsp; i++) {
         ba2str(&(ii+i)->bdaddr, addr);
-        memset(name, 0, sizeof(name));
-        if (hci_read_remote_name(sck, &(ii+i)->bdaddr, sizeof(name), name, 0) < 0) strcpy(name, "[unknown]");
-        devices.emplace_back(new BluetoothDevice(addr, name));
+        memset(_name, 0, sizeof(_name));
+        if (hci_read_remote_name(sck, &(ii+i)->bdaddr, sizeof(_name), _name, 0) < 0) strcpy(_name, "[unknown]");
+        devices.emplace_back(new pwnpi::BluetoothDevice(addr, _name));
     }
     free(ii);
     close(sck);
     return devices;
 }
 
-
-LIST_HEAD(listhead, connection_t) bleConnections;
-
-void *Bluetooth::bleConnectDevice(void *arg) {
-    struct connection_t *connection = (connection_t*) arg;
-    char* addr = connection->addr;
-    gatt_connection_t* gatt_connection;
-    gattlib_primary_service_t* services;
-    gattlib_characteristic_t* characteristics;
-    int services_count, characteristics_count;
-    char uuid_str[MAX_LEN_UUID_STR + 1];
-    int ret, i;
-
-    pthread_mutex_lock(&bleMtx);
-
-    printf("------------START %s ---------------\n", addr);
-
-    gatt_connection = gattlib_connect(nullptr, addr, BDADDR_LE_PUBLIC, BT_SEC_LOW, 0, 0);
-    if (gatt_connection == nullptr) {
-        gatt_connection = gattlib_connect(nullptr, addr, BDADDR_LE_RANDOM, BT_SEC_LOW, 0, 0);
-        if (gatt_connection == nullptr) goto connection_exit;
-    }
-    ret = gattlib_discover_primary(gatt_connection, &services, &services_count);
-    if (ret != 0) goto disconnect_exit;
-
-    for (i = 0; i < services_count; i++) {
-        gattlib_uuid_to_string(&services[i].uuid, uuid_str, sizeof(uuid_str));
-
-        printf("service[%d] start_handle:%02x end_handle:%02x uuid:%s\n", i,
-               services[i].attr_handle_start, services[i].attr_handle_end,
-               uuid_str);
-    }
-    free(services);
-
-    ret = gattlib_discover_char(gatt_connection, &characteristics, &characteristics_count);
-    if (ret != 0) {
-        fprintf(stderr, "Fail to discover characteristics.\n");
-        goto disconnect_exit;
-    }
-    for (i = 0; i < characteristics_count; i++) {
-        gattlib_uuid_to_string(&characteristics[i].uuid, uuid_str, sizeof(uuid_str));
-
-        printf("characteristic[%d] properties:%02x value_handle:%04x uuid:%s\n", i,
-               characteristics[i].properties, characteristics[i].value_handle,
-               uuid_str);
-    }
-    free(characteristics);
-
-    disconnect_exit:
-    gattlib_disconnect(gatt_connection);
-
-    connection_exit:
-    printf("------------DONE %s ---------------\n", addr);
-    pthread_mutex_unlock(&bleMtx);
-    return nullptr;
-}
-
-void Bluetooth::bleDiscoveredDevice(const char* addr, const char* name) {
-    struct connection_t *connection;
-    int ret;
-
-    if (name) {
-        printf("Discovered %s - '%s'\n", addr, name);
-    } else {
-        printf("Discovered %s\n", addr);
-    }
-
-    connection = (connection_t*) malloc(sizeof(struct connection_t));
-    if (connection == nullptr) {
-        fprintf(stderr, "Failt to allocate connection.\n");
-        return;
-    }
-    connection->addr = strdup(addr);
-
-    ret = pthread_create(&connection->thread, nullptr,	bleConnectDevice, connection);
-    if (ret != 0) {
-        fprintf(stderr, "Failt to create BLE connection thread.\n");
-        free(connection);
-        return;
-    }
-    LIST_INSERT_HEAD(&bleConnections, connection, entries);
-}
-
-std::vector<BluetoothLEDevice*> Bluetooth::scanLE() {
+std::vector<pwnpi::BluetoothLEDevice*> Bluetooth::scanLE() {
     std::cout << "scanning bluetooth le" << std::endl;
-    std::vector<BluetoothLEDevice*> devices;
-
-    int ret = gattlib_adapter_open(bluetoothConfiguration.interface.c_str(), &gattAdapter);
-    if (ret) return devices;
-
-    pthread_mutex_lock(&bleMtx);
-    ret = gattlib_adapter_scan_enable(gattAdapter, bleDiscoveredDevice, BLE_SCAN_TIMEOUT);
-    if (ret) return devices;
-    gattlib_adapter_scan_disable(gattAdapter);
-    pthread_mutex_unlock(&bleMtx);
-
-    while (bleConnections.lh_first != nullptr) {
-        struct connection_t* connection = bleConnections.lh_first;
-        pthread_join(connection->thread, nullptr);
-        LIST_REMOVE(bleConnections.lh_first, entries);
-        free(connection->addr);
-        free(connection);
+    std::vector<pwnpi::BluetoothLEDevice*> devices;
+    BluetoothManager *manager = nullptr;
+    try {
+        manager = BluetoothManager::get_bluetooth_manager();
+    } catch (const std::runtime_error& e){
+        std::cerr << e.what() << std::endl;
+        return devices;
     }
-
-    gattlib_adapter_close(gattAdapter);
+    if(!manager->start_discovery()) return devices;
+    for(int i=0; i<5; i++){
+        auto lst = manager->get_devices();
+        for(auto & it : lst){
+            devices.emplace_back(new pwnpi::BluetoothLEDevice(
+                    it->get_address(),
+                    it->get_name(),
+                    it->get_class_name(),
+                    it->get_object_path(),
+                    it->get_connected(),
+                    it->get_rssi()
+                    ));
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(4));
+    }
+    manager->stop_discovery();
     return devices;
 }
 
 void Bluetooth::stop() {
     setDoRun(false);
-    gattlib_adapter_scan_disable(gattAdapter);
     pthread_mutex_unlock(&bleMtx);
-    gattlib_adapter_close(gattAdapter);
 }
 
 void Bluetooth::run() {
     while(this->getDoRun()){
         if(!bluetoothConfiguration.onlyLE || bluetoothConfiguration.onlyClassic) {
-            std::vector<BluetoothDevice*> cDevices = scanClassic();
+            std::vector<pwnpi::BluetoothDevice*> cDevices = scanClassic();
             std::cout << "found " << cDevices.size() << " classic devices" << std::endl;
         }
         if(!bluetoothConfiguration.onlyClassic || bluetoothConfiguration.onlyLE) {
-            std::vector<BluetoothLEDevice*> lDevices = scanLE();  // todo retry on disconnected / errorous devices
+            std::vector<pwnpi::BluetoothLEDevice*> lDevices = scanLE();  // todo retry on disconnected / errorous devices
             std::cout << "found " << lDevices.size() << " le devices" << std::endl;
         }
     }

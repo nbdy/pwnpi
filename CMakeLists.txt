@@ -27,7 +27,7 @@ add_executable(pwnpi
         libs/Packet/Packet.cpp
         libs/Packet/Packet.h)
 
-target_link_libraries(pwnpi tins ev pthread gps bluetooth hiredis redox sqlite3 gattlib)
+target_link_libraries(pwnpi tins ev pthread gps bluetooth sqlite3 tinyb)
 
 install(DIRECTORY DESTINATION /var/lib/pwnpi/database/)
 install(DIRECTORY DESTINATION /var/lib/pwnpi/)
