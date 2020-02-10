@@ -1,5 +1,7 @@
 ### pwnpi
 
+[![asciicast](https://asciinema.org/a/299834.svg)](https://asciinema.org/a/299834)
+
 #### dependencies
 - libgps-dev
 - libtins-dev

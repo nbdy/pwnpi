@@ -3,6 +3,10 @@ project(pwnpi)
 
 set(CMAKE_CXX_STANDARD 11)
 
+include_directories(
+        ${tinyb_LIB_INCLUDE_DIRS}
+)
+
 add_executable(pwnpi
         main.cpp
         libs/Configuration/Configuration.cpp
